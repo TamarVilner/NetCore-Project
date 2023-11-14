@@ -11,18 +11,23 @@ namespace project.Controllers
     public class CourtController : ControllerBase
     {
         // GET: api/<CourtController>
-        public List<Court> courts = new List<Court> { new Court { Id=1, Name= "בית המשפט המחוזי בנצרת", City= "נוף הגליל" }, new Court { Id = 2,  Name = "בית המשפט המחוזי בחיפה", City = "חיפה" }, new Court { Id = 3, Name = "בית המשפט המחוזי בתל אביב", City = "תל אביב" }, new Court { Id = 4, Name = "בית המשפט המחוזי בירושלים", City = "ירושלים" }, new Court { Id = 5, Name = "בית המשפט המחוזי בבאר שבע", City = "באר שבע" }, new Court { Id = 6, Name = "בית המשפט המחוזי מרכז", City = "לוד" } };
+        private readonly DataContext _context;
+     //   public List<Court> courts = new List<Court> { new Court { Id=1, Name= "בית המשפט המחוזי בנצרת", City= "נוף הגליל" }, new Court { Id = 2,  Name = "בית המשפט המחוזי בחיפה", City = "חיפה" }, new Court { Id = 3, Name = "בית המשפט המחוזי בתל אביב", City = "תל אביב" }, new Court { Id = 4, Name = "בית המשפט המחוזי בירושלים", City = "ירושלים" }, new Court { Id = 5, Name = "בית המשפט המחוזי בבאר שבע", City = "באר שבע" }, new Court { Id = 6, Name = "בית המשפט המחוזי מרכז", City = "לוד" } };
+      public CourtController(DataContext context)
+        {
+            _context = context;
+        }
         [HttpGet]
         public IEnumerable<Court> Get()
         {
-            return courts;
+            return _context.CourtsList;
         }
 
         // GET api/<CourtController>/5
         [HttpGet("{id}")]
         public ActionResult<Court> Get(int id)
         {
-            var c = courts.Find(x => x.Id == id);
+            var c = _context.CourtsList.Find(x => x.Id == id);
             if (c == null)
                 return NotFound(); 
             return c; 
@@ -33,7 +38,7 @@ namespace project.Controllers
         [HttpPost]
         public void Post([FromBody] Court c)
         {
-            courts.Add(c);
+            _context.CourtsList.Add(c);
             //אם יעשה בעיות אז השורה הזו
             //
             // courts.Add(new Court { Id = c.Id, Name = c.Name, City = c.City, });
@@ -43,7 +48,7 @@ namespace project.Controllers
         [HttpPut("{id}")]
         public ActionResult Put(Court court)
         {
-            var c = courts.Find(x => x.Id == court.Id);
+            var c = _context.CourtsList.Find(x => x.Id == court.Id);
             if (c==null)
                 return NotFound();
             c.Id = court.Id;
@@ -56,10 +61,10 @@ namespace project.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
-            var c = courts.Find(X => X.Id == id);
+            var c = _context.CourtsList.Find(X => X.Id == id);
             if (c == null)
                 return NotFound();
-            courts.Remove(c);
+            _context.CourtsList.Remove(c);
             return Ok();
         }
     }
