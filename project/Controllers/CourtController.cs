@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using project.Entities;
+using Solid.Core.Entities;
+using Solid.Core.Services;
+using Solid.Service;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -10,62 +12,47 @@ namespace project.Controllers
     [ApiController]
     public class CourtController : ControllerBase
     {
-        // GET: api/<CourtController>
-        private readonly DataContext _context;
-     //   public List<Court> courts = new List<Court> { new Court { Id=1, Name= "בית המשפט המחוזי בנצרת", City= "נוף הגליל" }, new Court { Id = 2,  Name = "בית המשפט המחוזי בחיפה", City = "חיפה" }, new Court { Id = 3, Name = "בית המשפט המחוזי בתל אביב", City = "תל אביב" }, new Court { Id = 4, Name = "בית המשפט המחוזי בירושלים", City = "ירושלים" }, new Court { Id = 5, Name = "בית המשפט המחוזי בבאר שבע", City = "באר שבע" }, new Court { Id = 6, Name = "בית המשפט המחוזי מרכז", City = "לוד" } };
-      public CourtController(DataContext context)
+        private readonly ICourtService _courtService;
+        public CourtController(ICourtService courtService)
         {
-            _context = context;
+            _courtService = courtService;
         }
+
+
+        // GET: api/<CourtController>
         [HttpGet]
         public IEnumerable<Court> Get()
         {
-            return _context.CourtsList;
+            return (IEnumerable<Court>)_courtService.Get();
         }
 
         // GET api/<CourtController>/5
         [HttpGet("{id}")]
         public ActionResult<Court> Get(int id)
         {
-            var c = _context.CourtsList.Find(x => x.Id == id);
-            if (c == null)
-                return NotFound(); 
-            return c; 
+            return Ok(_courtService.Get(id));
         }
 
 
         // POST api/<CourtController>
         [HttpPost]
-        public void Post([FromBody] Court c)
+        public void Post(Court c)
         {
-            _context.CourtsList.Add(c);
-            //אם יעשה בעיות אז השורה הזו
-            //
-            // courts.Add(new Court { Id = c.Id, Name = c.Name, City = c.City, });
+           _courtService.Post(c);
         }
 
         // PUT api/<CourtController>/5
         [HttpPut("{id}")]
-        public ActionResult Put(Court court)
+        public void Put(Court court)
         {
-            var c = _context.CourtsList.Find(x => x.Id == court.Id);
-            if (c==null)
-                return NotFound();
-            c.Id = court.Id;
-            c.Name = court.Name;
-            c.City = court.City;
-            return Ok();
+            _courtService.Put(court);
         }
 
         // DELETE api/<CourtController>/5
         [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        public void Delete(int id)
         {
-            var c = _context.CourtsList.Find(X => X.Id == id);
-            if (c == null)
-                return NotFound();
-            _context.CourtsList.Remove(c);
-            return Ok();
+            _courtService.Delete(id);
         }
     }
 }
